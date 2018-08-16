@@ -6,14 +6,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/voyagegroup/go-todo/controller"
-	"github.com/voyagegroup/go-todo/db"
-
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/context"
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+	"github.com/voyagegroup/go-todo/controller"
+	"github.com/voyagegroup/go-todo/db"
 )
 
 // Serverはベースアプリケーションのserverを示します
@@ -73,6 +72,7 @@ func (s *Server) Route() *mux.Router {
 	}).Methods("GET")
 
 	todo := &controller.Todo{DB: s.dbx}
+	comment := &controller.Comment{DB: s.dbx}
 
 	// TODO ng?
 	router.Handle("/api/todos", handler(todo.Get)).Methods("GET")
@@ -80,6 +80,14 @@ func (s *Server) Route() *mux.Router {
 	router.Handle("/api/todos", handler(todo.Post)).Methods("POST")
 	router.Handle("/api/todos", handler(todo.Delete)).Methods("DELETE")
 	router.Handle("/api/todos/toggle", handler(todo.Toggle)).Methods("PUT")
+
+	router.Handle("/api/todos/search", handler(todo.Search)).Methods("GET")
+	router.Handle("/api/todos/change_order", handler(todo.Order)).Methods("GET")
+
+	router.Handle("/api/comments", handler(comment.Post)).Methods("Post")
+
+	user := &controller.User{}
+	router.Handle("/api/users", handler(user.Get)).Methods("Get")
 
 	// TODO return index.html
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

@@ -35,7 +35,7 @@ func (c *Config) DSN() string {
 // OpenはConfigで指定されている接続先に接続する。
 // MySQL固定
 func (c *Config) Open() (*sqlx.DB, error) {
-	return sqlx.Open("mysql", c.DSN())
+	return sqlx.Open("mysql", "root:@/treasure?parseTime=true&charset=utf8mb4&interpolateParams=true")
 }
 
 // NewConfigsFromFileはConfigから設定を読み取る

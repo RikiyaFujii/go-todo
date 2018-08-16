@@ -16,6 +16,27 @@ type Todo struct {
 	Updated   *time.Time `json:"updated"`
 }
 
+func Order(dbx *sqlx.DB, order string) (todos []Todo, err error) {
+	if order == "desc" {
+
+	} else if order == "asc" {
+
+	} else {
+		if err := dbx.Select(&todos, "select * from todos"); err != nil {
+			return nil, err
+		}
+	}
+	return todos, nil
+}
+
+func Search(dbx *sqlx.DB, title string, completed bool) (todos []Todo, err error) {
+	if err := dbx.Select(&todos, "select * from todos where title = ? or completed = ?", title, completed); err != nil {
+		return nil, err
+	}
+
+	return todos, nil
+}
+
 func TodosAll(dbx *sqlx.DB) (todos []Todo, err error) {
 	if err := dbx.Select(&todos, "select * from todos"); err != nil {
 		return nil, err

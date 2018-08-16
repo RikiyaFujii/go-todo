@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/voyagegroup/go-todo/model"
 
@@ -12,6 +13,28 @@ import (
 // Todo はTodoへのリクエストに関する制御をします
 type Todo struct {
 	DB *sqlx.DB
+}
+
+func (t *Todo) Order(w http.ResponseWriter, r *http.Request) error {
+	order := r.FormValue("order")
+	todos, err := model.Order(t.DB, order)
+	if err != nil {
+		return err
+	}
+	return JSON(w, 200, todos)
+}
+
+// 検索
+func (t *Todo) Search(w http.ResponseWriter, r *http.Request) error {
+	title := r.FormValue("title")
+	completed := r.FormValue("completed")
+	// createdAt := r.FormValue("created_at")
+	c, err := strconv.ParseBool(completed)
+	todos, err := model.Search(t.DB, title, c)
+	if err != nil {
+		return err
+	}
+	return JSON(w, 200, todos)
 }
 
 // GetはDBからユーザを取得して結果を返します
